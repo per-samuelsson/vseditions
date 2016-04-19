@@ -95,9 +95,20 @@ namespace VsEditions {
 
     class Program {
         static void Main(string[] args) {
-            var editions = GetInstalledVSEditionsSupported();
+            Dictionary<VisualStudioVersion, string[]> subKeys;
+            var editions = GetInstalledVSEditionsSupported(out subKeys);
+
+            Console.WriteLine("Keys we know about:");
             foreach (var edition in editions) {
                 Console.WriteLine("VS {0}/{1}: {2}", edition.Version.Year, edition.Version.BuildNumber, edition.DisplayName);
+            }
+
+            Console.WriteLine("Found keys per version:");
+            foreach (var item in subKeys) {
+                Console.WriteLine("VS {0}/{1}:", item.Key.Year, item.Key.BuildNumber);
+                foreach (var subkey in item.Value) {
+                    Console.WriteLine("  {0}", subkey);
+                }
             }
         }
 
@@ -110,7 +121,7 @@ namespace VsEditions {
         /// http://www.mztools.com/articles/2008/MZ2008003.aspx
         /// </remarks>
         /// <returns></returns>
-        public static List<VisualStudioEdition> GetInstalledVSEditionsSupported() {
+        public static List<VisualStudioEdition> GetInstalledVSEditionsSupported(out Dictionary<VisualStudioVersion, string[]> subKeyNames) {
             List<VisualStudioEdition> installedEditions = new List<VisualStudioEdition>();
             VisualStudioVersion[] supportedVersions = new VisualStudioVersion[]
             {
@@ -119,6 +130,7 @@ namespace VsEditions {
                 VisualStudioVersion.VS2013,
                 VisualStudioVersion.VS2015
             };
+            subKeyNames = new Dictionary<VisualStudioVersion, string[]>();
 
             // No matter the OS, and despite us being a 64-bit application, we request
             // the 32-bit view of the registry, since this is where Visual Studio keep
@@ -133,6 +145,9 @@ namespace VsEditions {
                         using (var setupKey = versionKey.OpenSubKey(@"Setup\VS")) {
                             if (setupKey == null)
                                 continue;
+
+                            var keys = setupKey.GetSubKeyNames();
+                            subKeyNames.Add(version, keys);
 
                             foreach (var namedEdition in VisualStudioEdition.NamedEditions) {
                                 using (var editionKey = setupKey.OpenSubKey(namedEdition)) {
