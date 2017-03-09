@@ -71,7 +71,11 @@ namespace VsEditions {
         /// </summary>
         public static readonly VisualStudioVersion VS2015 = new VisualStudioVersion("2015", "14.0");
 
-
+        /// <summary>
+        /// Represents the Visual Studio version 2017 ("15.0").
+        /// </summary>
+        public static readonly VisualStudioVersion VS2017 = new VisualStudioVersion("2017", "15.0");
+        
         /// <summary>
         /// Initializes a <see cref="VisualStudioVersion"/>.
         /// </summary>
@@ -92,7 +96,7 @@ namespace VsEditions {
         /// </summary>
         public readonly string BuildNumber;
     }
-
+    
     class Program {
         static void Main(string[] args) {
             Dictionary<VisualStudioVersion, string[]> subKeys;
@@ -128,7 +132,8 @@ namespace VsEditions {
                 VisualStudioVersion.VS2010,
                 VisualStudioVersion.VS2012,
                 VisualStudioVersion.VS2013,
-                VisualStudioVersion.VS2015
+                VisualStudioVersion.VS2015,
+                VisualStudioVersion.VS2017
             };
             subKeyNames = new Dictionary<VisualStudioVersion, string[]>();
 
